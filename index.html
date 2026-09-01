@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acampamento na Floresta</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(255,255,200,.25), transparent 40%),
+        linear-gradient(180deg, #7ec8f0 0%, #a8e6ff 35%, #4aa94a 35%, #2f7d2f 100%);
+      overflow-x: hidden;
+    }
+
+    .sky-stuff { position: fixed; top: 0; left: 0; width: 100%; height: 35vh; pointer-events: none; z-index: 0; }
+    .sun { position: absolute; top: 20px; right: 60px; width: 90px; height: 90px; background: radial-gradient(circle, #ffe259, #ffa751); border-radius: 50%; box-shadow: 0 0 40px 15px rgba(255,195,80,.5); }
+    .cloud { position: absolute; background: #fff; border-radius: 40px; opacity: .9; }
+    .cloud::before, .cloud::after { content: ""; position: absolute; background: #fff; border-radius: 50%; }
+    .cloud::before { width: 50px; height: 50px; top: -20px; left: 12px; }
+    .cloud::after { width: 35px; height: 35px; top: -12px; left: 45px; }
+    .c1 { width: 90px; height: 34px; top: 40px; left: 12%; animation: drift 40s linear infinite; }
+    .c2 { width: 70px; height: 26px; top: 90px; left: 65%; animation: drift 55s linear infinite; animation-delay: -20s; }
+    .c3 { width: 110px; height: 40px; top: 25px; left: 80%; animation: drift 60s linear infinite; animation-delay: -8s; }
+    @keyframes drift { from { transform: translateX(-20vw); } to { transform: translateX(120vw); } }
+
+    .trees { position: fixed; bottom: 0; left: 0; width: 100%; height: 65vh; pointer-events: none; z-index: 0; }
+    .tree { position: absolute; }
+    .tree .trunk { width: 26px; height: 70px; background: #6b4226; margin: 0 auto; border-radius: 4px; }
+    .tree .top { width: 80px; height: 80px; background: #1f6e22; clip-path: polygon(50% 0, 100% 60%, 82% 100%, 18% 100%, 0 60%); margin: 0 auto; }
+    .t1 { left: 3%; bottom: 12%; }
+    .t2 { left: 22%; bottom: 4%; }
+    .t3 { left: 45%; bottom: 14%; }
+    .t4 { left: 68%; bottom: 6%; }
+    .t5 { left: 88%; bottom: 15%; }
+    .tree { transform: scale(1); }
+    .t2 { transform: scale(1.2); }
+    .t4 { transform: scale(1.35); }
+
+    .bush { position: fixed; bottom: 18%; background: #2c6e2c; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
+    .b1 { width: 90px; height: 50px; left: 35%; }
+    .b2 { width: 120px; height: 60px; left: 70%; }
+
+    .tent { position: fixed; bottom: 0; right: -12%; width: 380px; height: 260px; z-index: 1; pointer-events: none; }
+    .tent-body { position: absolute; bottom: 0; width: 240px; height: 170px; background: #f2654a; clip-path: polygon(0 100%, 10% 45%, 50% 0, 90% 45%, 100% 100%); }
+    .tent-body::before { content: ""; position: absolute; top: 0; left: 48%; width: 4px; height: 100%; background: rgba(0,0,0,.15); }
+    .tent-body::after { content: ""; position: absolute; top: 40px; left: 47%; width: 14px; height: 14px; background: #333; clip-path: polygon(50% 50%, 100% 10%, 100% 90%); }
+    .tent-top { position: absolute; bottom: 130px; left: 30px; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 60px solid #c94f37; }
+
+    .game {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 60px;
+    }
+
+    header { text-align: center; margin-bottom: 12px; }
+    h1 {
+      color: #fff;
+      text-shadow: 3px 3px 0 #2f5d2f, -1px -1px 0 #2f5d2f;
+      font-size: 2.6em;
+      letter-spacing: 2px;
+    }
+    .tagline { color: #fdf6d8; font-size: 1.1em; margin-top: 6px; text-shadow: 1px 1px 0 #2f5d2f; }
+
+    .panel {
+      background: rgba(255, 255, 255, .92);
+      border: 5px solid #8b5a2b;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 0 rgba(0,0,0,.2);
+    }
+
+    .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 1.3em; font-weight: bold; color: #3c2a10; }
+    .moves, .pairs { background: #fdf6d8; border: 3px solid #8b5a2b; border-radius: 12px; padding: 6px 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .card {
+      aspect-ratio: 1 / 1;
+      perspective: 600px;
+      cursor: pointer;
+    }
+    .inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .5s;
+    }
+    .card.flip .inner { transform: rotateY(180deg); }
+    .card.matched .inner { transform: rotateY(180deg); }
+    .front, .back {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      backface-visibility: hidden;
+    }
+    .front {
+      background: linear-gradient(145deg, #7c4a21, #a4693a);
+      border: 4px solid #5a3413;
+      font-size: 2.6em;
+      color: #fdf6d8;
+    }
+    .front::before { content: ""; position: absolute; width: 60px; height: 60px; background: #f2654a; opacity: .35; border-radius: 50%; }
+    .back {
+      background: linear-gradient(145deg, #eaf7e3, #cdecc9);
+      border: 4px solid #4aa94a;
+      transform: rotateY(180deg);
+      font-size: 3.4em;
+    }
+    .card.flip, .card.matched { cursor: default; }
+    .card .back .label { position: absolute; bottom: 4px; font-size: .6em; color: #2f5d2f; }
+
+    .message {
+      text-align: center;
+      font-size: 1.4em;
+      margin-top: 16px;
+      color: #fdf6d8;
+      text-shadow: 2px 2px 0 #2f5d2f;
+      min-height: 1.6em;
+    }
+    .btn {
+      font-family: inherit;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(180deg, #ff9a3d, #e26212);
+      border: none;
+      border-radius: 14px;
+      padding: 12px 26px;
+      margin-top: 10px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #8f3d0a;
+      transition: transform .1s;
+    }
+    .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #8f3d0a; }
+    .center { text-align: center; }
+
+    .animals-list {
+      margin-top: 20px;
+      padding: 12px;
+      text-align: center;
+      font-size: 1.1em;
+      color: #3c2a10;
+    }
+    .animals-list span { display: inline-block; margin: 4px 8px; font-size: 1.5em; }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .back { font-size: 2.2em; }
+      .front { font-size: 1.8em; }
+      h1 { font-size: 1.8em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky-stuff">
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
+
+  <div class="game">
+    <header>
+      <h1>🌲 Acampamento na Floresta 🌲</h1>
+      <div class="tagline">Encontre os pares de animais do acampamento!</div>
+    </header>
+
+    <div class="panel">
+      <div class="hud">
+        <div class="moves">Movimentos: <span id="moves">0</span></div>
+        <div class="pairs">Pares: <span id="pairs">0</span>/<span id="total">7</span></div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="message" id="message"></div>
+      <div class="center"><button class="btn" id="restart">🔄 Recomeçar</button></div>
+    </div>
+
+    <div class="animals-list">
+      Os animais do acampamento:
+      <br>
+      <span>🐱 Gato</span>
+      <span>🐻 Urso</span>
+      <span>🦆 Pato</span>
+      <span>🐶 Cachorro</span>
+      <span>🐍 Cobra</span>
+      <span>🦄 Istorpiaru</span>
+      <span>🐉 Ramister</span>
+    </div>
+  </div>
+
+  <div class="trees">
+    <div class="tree t1"><div class="top"></div><div class="trunk"></div></div>
+    <div class="tree t2"><div class="top"></div><div class="trunk"></div></div>
+    <div class="tree t3"><div class="top"></div><div class="trunk"></div></div>
+    <div class="tree t4"><div class="top"></div><div class="trunk"></div></div>
+    <div class="tree t5"><div class="top"></div><div class="trunk"></div></div>
+    <div class="bush b1"></div>
+    <div class="bush b2"></div>
+  </div>
+
+  <div class="tent">
+    <div class="tent-body"></div>
+    <div class="tent-top"></div>
+  </div>
+
+  <script>
+    const ANIMALS = [
+      { name: "Gato", icon: "🐱" },
+      { name: "Urso", icon: "🐻" },
+      { name: "Pato", icon: "🦆" },
+      { name: "Cachorro", icon: "🐶" },
+      { name: "Cobra", icon: "🐍" },
+      { name: "Istorpiaru", icon: "🦄" },
+      { name: "Ramister", icon: "🐉" }
+    ];
+
+    const grid = document.getElementById("grid");
+    const movesEl = document.getElementById("moves");
+    const pairsEl = document.getElementById("pairs");
+    const totalEl = document.getElementById("total");
+    const messageEl = document.getElementById("message");
+    const restartBtn = document.getElementById("restart");
+
+    let deck = [];
+    let first = null;
+    let lock = false;
+    let moves = 0;
+    let pairs = 0;
+
+    totalEl.textContent = ANIMALS.length;
+
+    function buildDeck() {
+      deck = [];
+      for (const a of ANIMALS) {
+        deck.push(a);
+        deck.push(a);
+      }
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+    }
+
+    function render() {
+      grid.innerHTML = "";
+      deck.forEach((a, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.index = i;
+        card.innerHTML =
+          '<div class="inner">' +
+          '<div class="front">🌲</div>' +
+          '<div class="back">' + a.icon + '<span class="label">' + a.name.toLowerCase() + '</span></div>' +
+          '</div>';
+        card.addEventListener("click", () => handleClick(card, a));
+        grid.appendChild(card);
+      });
+    }
+
+    function handleClick(card, animal) {
+      if (lock || card.classList.contains("flip") || card.classList.contains("matched")) return;
+      card.classList.add("flip");
+
+      if (!first) {
+        first = { card, animal };
+        return;
+      }
+
+      moves++;
+      movesEl.textContent = moves;
+
+      const second = { card, animal };
+      if (first.animal.name === second.animal.name) {
+        first.card.classList.remove("flip");
+        first.card.classList.add("matched");
+        second.card.classList.add("matched");
+        pairs++;
+        pairsEl.textContent = pairs;
+        first = null;
+        if (pairs === ANIMALS.length) {
+          messageEl.textContent = "🎉 Parabéns! Você encontrou todos os animais do acampamento em " + moves + " movimentos! 🎉";
+        }
+      } else {
+        lock = true;
+        setTimeout(() => {
+          first.card.classList.remove("flip");
+          second.card.classList.remove("flip");
+          first = null;
+          lock = false;
+        }, 600);
+      }
+    }
+
+    function reset() {
+      buildDeck();
+      render();
+      first = null;
+      lock = false;
+      moves = 0;
+      pairs = 0;
+      movesEl.textContent = 0;
+      pairsEl.textContent = 0;
+      messageEl.textContent = "";
+    }
+
+    restartBtn.addEventListener("click", reset);
+    reset();
+  </script>
+</body>
+</html>
