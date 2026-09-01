@@ -122,6 +122,7 @@
   </div>
 
   <div class="hud">
+    <span>Jogadora: <strong>Livia</strong> 🎀</span>
     <span>Vidas: <span class="hearts" id="hearts">❤️❤️❤️❤️❤️</span></span>
     <span>Pontos: <span id="score">0</span></span>
   </div>
@@ -133,15 +134,15 @@
   <div class="overlay" id="startScreen">
     <h1>🌲 DEFESA DA FLORESTA 🌲</h1>
     <p class="animals">🐱 🐻 🦆 🐶 🐍 🦄 🐉</p>
-    <p>Os animais estão furiosos e vêm te pegar no acampamento!<br>
-    Você tem uma arma de dardos para se proteger.<br>
-    Atire neles clicando antes que cheguem até você!</p>
+    <p>Os animais estão furiosos e vêm pegar a Livia no acampamento!<br>
+    Ela tem uma arma de dardos para se proteger.<br>
+    Ajude a Livia a atirar neles clicando antes que cheguem até ela!</p>
     <button class="btn" id="startBtn">▶️ Começar</button>
   </div>
 
   <div class="overlay hidden" id="gameOver">
-    <h1>😱 Os animais te pegaram!</h1>
-    <p>Você defendeu o acampamento e marcou <strong id="finalScore">0</strong> pontos!</p>
+    <h1>😱 Os animais pegaram a Livia!</h1>
+    <p>Ela defendeu o acampamento e marcou <strong id="finalScore">0</strong> pontos!</p>
     <button class="btn" id="againBtn">🔄 Jogar de novo</button>
   </div>
 
@@ -312,10 +313,18 @@
         ctx.globalAlpha = 1;
       }
 
-      // player
+// player
       const px = W / 2, py = H - 52;
       ctx.font = "56px sans-serif";
-      ctx.fillText("🧑‍🏕️", px, py);
+      ctx.fillText("🧑‍🏭", px, py);
+
+      ctx.font = "16px sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.strokeStyle = "#2f5d2f";
+      ctx.lineWidth = 3;
+      ctx.strokeText("LIVIA", px, py + 46);
+      ctx.fillText("LIVIA", px, py + 46);
+      ctx.fillStyle = "#000";
 
       ctx.font = "30px sans-serif";
       ctx.fillText("🔫", px + 30, py + 6);
