@@ -3,203 +3,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acampamento na Floresta</title>
+  <title>Defesa da Floresta - Acampamento</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: "Comic Sans MS", "Chalkboard SE", sans-serif;
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 20% 80%, rgba(255,255,200,.25), transparent 40%),
-        linear-gradient(180deg, #7ec8f0 0%, #a8e6ff 35%, #4aa94a 35%, #2f7d2f 100%);
-      overflow-x: hidden;
+      background: linear-gradient(180deg, #7ec8f0 0%, #a8e6ff 30%, #4aa94a 30%, #2f7d2f 100%);
+      overflow: hidden;
+      user-select: none;
     }
 
-    .sky-stuff { position: fixed; top: 0; left: 0; width: 100%; height: 35vh; pointer-events: none; z-index: 0; }
-    .sun { position: absolute; top: 20px; right: 60px; width: 90px; height: 90px; background: radial-gradient(circle, #ffe259, #ffa751); border-radius: 50%; box-shadow: 0 0 40px 15px rgba(255,195,80,.5); }
+    .sky {
+      position: fixed; top: 0; left: 0; width: 100%; height: 30vh; pointer-events: none; z-index: 0;
+    }
+    .sun { position: absolute; top: 16px; right: 50px; width: 80px; height: 80px; background: radial-gradient(circle, #ffe259, #ffa751); border-radius: 50%; box-shadow: 0 0 40px 15px rgba(255,195,80,.5); }
     .cloud { position: absolute; background: #fff; border-radius: 40px; opacity: .9; }
     .cloud::before, .cloud::after { content: ""; position: absolute; background: #fff; border-radius: 50%; }
-    .cloud::before { width: 50px; height: 50px; top: -20px; left: 12px; }
-    .cloud::after { width: 35px; height: 35px; top: -12px; left: 45px; }
-    .c1 { width: 90px; height: 34px; top: 40px; left: 12%; animation: drift 40s linear infinite; }
-    .c2 { width: 70px; height: 26px; top: 90px; left: 65%; animation: drift 55s linear infinite; animation-delay: -20s; }
-    .c3 { width: 110px; height: 40px; top: 25px; left: 80%; animation: drift 60s linear infinite; animation-delay: -8s; }
+    .cloud::before { width: 45px; height: 45px; top: -18px; left: 12px; }
+    .cloud::after { width: 30px; height: 30px; top: -10px; left: 42px; }
+    .c1 { width: 80px; height: 30px; top: 40px; left: 10%; animation: drift 45s linear infinite; }
+    .c2 { width: 65px; height: 24px; top: 90px; left: 60%; animation: drift 60s linear infinite; animation-delay: -25s; }
+    .c3 { width: 100px; height: 38px; top: 25px; left: 75%; animation: drift 50s linear infinite; animation-delay: -10s; }
     @keyframes drift { from { transform: translateX(-20vw); } to { transform: translateX(120vw); } }
 
-    .trees { position: fixed; bottom: 0; left: 0; width: 100%; height: 65vh; pointer-events: none; z-index: 0; }
+    .trees { position: fixed; bottom: 0; left: 0; width: 100%; height: 70vh; pointer-events: none; z-index: 0; }
     .tree { position: absolute; }
-    .tree .trunk { width: 26px; height: 70px; background: #6b4226; margin: 0 auto; border-radius: 4px; }
-    .tree .top { width: 80px; height: 80px; background: #1f6e22; clip-path: polygon(50% 0, 100% 60%, 82% 100%, 18% 100%, 0 60%); margin: 0 auto; }
+    .tree .trunk { width: 24px; height: 60px; background: #6b4226; margin: 0 auto; border-radius: 4px; }
+    .tree .top { width: 76px; height: 76px; background: #1f6e22; clip-path: polygon(50% 0, 100% 60%, 82% 100%, 18% 100%, 0 60%); margin: 0 auto; }
     .t1 { left: 3%; bottom: 12%; }
-    .t2 { left: 22%; bottom: 4%; }
+    .t2 { left: 22%; bottom: 4%; transform: scale(1.2); }
     .t3 { left: 45%; bottom: 14%; }
-    .t4 { left: 68%; bottom: 6%; }
+    .t4 { left: 68%; bottom: 6%; transform: scale(1.35); }
     .t5 { left: 88%; bottom: 15%; }
-    .tree { transform: scale(1); }
-    .t2 { transform: scale(1.2); }
-    .t4 { transform: scale(1.35); }
-
-    .bush { position: fixed; bottom: 18%; background: #2c6e2c; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
+    .bush { position: fixed; bottom: 20%; background: #2c6e2c; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
     .b1 { width: 90px; height: 50px; left: 35%; }
     .b2 { width: 120px; height: 60px; left: 70%; }
 
-    .tent { position: fixed; bottom: 0; right: -12%; width: 380px; height: 260px; z-index: 1; pointer-events: none; }
-    .tent-body { position: absolute; bottom: 0; width: 240px; height: 170px; background: #f2654a; clip-path: polygon(0 100%, 10% 45%, 50% 0, 90% 45%, 100% 100%); }
-    .tent-body::before { content: ""; position: absolute; top: 0; left: 48%; width: 4px; height: 100%; background: rgba(0,0,0,.15); }
-    .tent-body::after { content: ""; position: absolute; top: 40px; left: 47%; width: 14px; height: 14px; background: #333; clip-path: polygon(50% 50%, 100% 10%, 100% 90%); }
-    .tent-top { position: absolute; bottom: 130px; left: 30px; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 60px solid #c94f37; }
-
-    .game {
-      position: relative;
-      z-index: 2;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px 16px 60px;
+    #game {
+      position: fixed; inset: 0; z-index: 5;
+      cursor: crosshair;
+      display: block;
     }
 
-    header { text-align: center; margin-bottom: 12px; }
-    h1 {
-      color: #fff;
-      text-shadow: 3px 3px 0 #2f5d2f, -1px -1px 0 #2f5d2f;
-      font-size: 2.6em;
-      letter-spacing: 2px;
+    .hud {
+      position: fixed; top: 10px; left: 10px; z-index: 10;
+      background: rgba(255,255,255,.93);
+      border: 4px solid #8b5a2b;
+      border-radius: 14px;
+      padding: 8px 16px;
+      font-weight: bold;
+      color: #3c2a10;
+      display: flex;
+      gap: 22px;
+      box-shadow: 0 5px 0 rgba(0,0,0,.2);
     }
-    .tagline { color: #fdf6d8; font-size: 1.1em; margin-top: 6px; text-shadow: 1px 1px 0 #2f5d2f; }
+    .hud .hearts { font-size: 1.5em; letter-spacing: 2px; }
 
-    .panel {
-      background: rgba(255, 255, 255, .92);
-      border: 5px solid #8b5a2b;
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 8px 0 rgba(0,0,0,.2);
-    }
-
-    .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 1.3em; font-weight: bold; color: #3c2a10; }
-    .moves, .pairs { background: #fdf6d8; border: 3px solid #8b5a2b; border-radius: 12px; padding: 6px 14px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .card {
-      aspect-ratio: 1 / 1;
-      perspective: 600px;
-      cursor: pointer;
-    }
-    .inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transition: transform .5s;
-    }
-    .card.flip .inner { transform: rotateY(180deg); }
-    .card.matched .inner { transform: rotateY(180deg); }
-    .front, .back {
-      position: absolute;
-      inset: 0;
+    .overlay {
+      position: fixed; inset: 0; z-index: 20;
+      background: rgba(20, 40, 20, .72);
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 14px;
-      backface-visibility: hidden;
-    }
-    .front {
-      background: linear-gradient(145deg, #7c4a21, #a4693a);
-      border: 4px solid #5a3413;
-      font-size: 2.6em;
-      color: #fdf6d8;
-    }
-    .front::before { content: ""; position: absolute; width: 60px; height: 60px; background: #f2654a; opacity: .35; border-radius: 50%; }
-    .back {
-      background: linear-gradient(145deg, #eaf7e3, #cdecc9);
-      border: 4px solid #4aa94a;
-      transform: rotateY(180deg);
-      font-size: 3.4em;
-    }
-    .card.flip, .card.matched { cursor: default; }
-    .card .back .label { position: absolute; bottom: 4px; font-size: .6em; color: #2f5d2f; }
-
-    .message {
+      flex-direction: column;
       text-align: center;
-      font-size: 1.4em;
-      margin-top: 16px;
-      color: #fdf6d8;
-      text-shadow: 2px 2px 0 #2f5d2f;
-      min-height: 1.6em;
+      color: #fff;
+      backdrop-filter: blur(2px);
     }
-    .btn {
+    .overlay.hidden { display: none; }
+    .overlay h1 { font-size: 3em; text-shadow: 3px 3px 0 #2f5d2f; margin-bottom: 10px; }
+    .overlay p { font-size: 1.3em; margin-bottom: 18px; }
+    .overlay .btn {
       font-family: inherit;
-      font-size: 1.2em;
+      font-size: 1.3em;
       font-weight: bold;
       color: #fff;
       background: linear-gradient(180deg, #ff9a3d, #e26212);
       border: none;
       border-radius: 14px;
-      padding: 12px 26px;
-      margin-top: 10px;
+      padding: 14px 32px;
       cursor: pointer;
       box-shadow: 0 5px 0 #8f3d0a;
       transition: transform .1s;
     }
-    .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #8f3d0a; }
-    .center { text-align: center; }
+    .overlay .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #8f3d0a; }
+    .overlay .animals { font-size: 2em; margin-bottom: 16px; letter-spacing: 6px; }
 
-    .animals-list {
-      margin-top: 20px;
-      padding: 12px;
-      text-align: center;
-      font-size: 1.1em;
-      color: #3c2a10;
+    .hint {
+      position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
+      z-index: 10; color: #fff; text-shadow: 1px 1px 0 #2f5d2f;
+      font-size: 1.05em; text-align: center; pointer-events: none;
     }
-    .animals-list span { display: inline-block; margin: 4px 8px; font-size: 1.5em; }
 
     @media (max-width: 600px) {
-      .grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
-      .back { font-size: 2.2em; }
-      .front { font-size: 1.8em; }
-      h1 { font-size: 1.8em; }
+      .hud { gap: 12px; padding: 6px 12px; }
+      .overlay h1 { font-size: 2em; }
     }
   </style>
 </head>
 <body>
-  <div class="sky-stuff">
+  <div class="sky">
     <div class="sun"></div>
     <div class="cloud c1"></div>
     <div class="cloud c2"></div>
     <div class="cloud c3"></div>
-  </div>
-
-  <div class="game">
-    <header>
-      <h1>🌲 Acampamento na Floresta 🌲</h1>
-      <div class="tagline">Encontre os pares de animais do acampamento!</div>
-    </header>
-
-    <div class="panel">
-      <div class="hud">
-        <div class="moves">Movimentos: <span id="moves">0</span></div>
-        <div class="pairs">Pares: <span id="pairs">0</span>/<span id="total">7</span></div>
-      </div>
-      <div class="grid" id="grid"></div>
-      <div class="message" id="message"></div>
-      <div class="center"><button class="btn" id="restart">🔄 Recomeçar</button></div>
-    </div>
-
-    <div class="animals-list">
-      Os animais do acampamento:
-      <br>
-      <span>🐱 Gato</span>
-      <span>🐻 Urso</span>
-      <span>🦆 Pato</span>
-      <span>🐶 Cachorro</span>
-      <span>🐍 Cobra</span>
-      <span>🦄 Istorpiaru</span>
-      <span>🐉 Ramister</span>
-    </div>
   </div>
 
   <div class="trees">
@@ -212,113 +121,245 @@
     <div class="bush b2"></div>
   </div>
 
-  <div class="tent">
-    <div class="tent-body"></div>
-    <div class="tent-top"></div>
+  <div class="hud">
+    <span>Vidas: <span class="hearts" id="hearts">❤️❤️❤️❤️❤️</span></span>
+    <span>Pontos: <span id="score">0</span></span>
+  </div>
+
+  <div class="hint">🔫 Clique nos animais para detoná-los antes que cheguem até você!</div>
+
+  <canvas id="game"></canvas>
+
+  <div class="overlay" id="startScreen">
+    <h1>🌲 DEFESA DA FLORESTA 🌲</h1>
+    <p class="animals">🐱 🐻 🦆 🐶 🐍 🦄 🐉</p>
+    <p>Os animais estão furiosos e vêm te pegar no acampamento!<br>
+    Você tem uma arma de dardos para se proteger.<br>
+    Atire neles clicando antes que cheguem até você!</p>
+    <button class="btn" id="startBtn">▶️ Começar</button>
+  </div>
+
+  <div class="overlay hidden" id="gameOver">
+    <h1>😱 Os animais te pegaram!</h1>
+    <p>Você defendeu o acampamento e marcou <strong id="finalScore">0</strong> pontos!</p>
+    <button class="btn" id="againBtn">🔄 Jogar de novo</button>
   </div>
 
   <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const heartsEl = document.getElementById("hearts");
+    const scoreEl = document.getElementById("score");
+    const finalScoreEl = document.getElementById("finalScore");
+    const startScreen = document.getElementById("startScreen");
+    const gameOverScreen = document.getElementById("gameOver");
+
     const ANIMALS = [
-      { name: "Gato", icon: "🐱" },
-      { name: "Urso", icon: "🐻" },
-      { name: "Pato", icon: "🦆" },
-      { name: "Cachorro", icon: "🐶" },
-      { name: "Cobra", icon: "🐍" },
-      { name: "Istorpiaru", icon: "🦄" },
-      { name: "Ramister", icon: "🐉" }
+      { name: "Gato", icon: "🐱", size: 1, speed: 1.0 },
+      { name: "Urso", icon: "🐻", size: 1.3, speed: 0.75 },
+      { name: "Pato", icon: "🦆", size: 0.9, speed: 1.1 },
+      { name: "Cachorro", icon: "🐶", size: 1, speed: 1.05 },
+      { name: "Cobra", icon: "🐍", size: 0.85, speed: 1.2 },
+      { name: "Istorpiaru", icon: "🦄", size: 1.15, speed: 0.85 },
+      { name: "Ramister", icon: "🐉", size: 1.5, speed: 0.65 }
     ];
 
-    const grid = document.getElementById("grid");
-    const movesEl = document.getElementById("moves");
-    const pairsEl = document.getElementById("pairs");
-    const totalEl = document.getElementById("total");
-    const messageEl = document.getElementById("message");
-    const restartBtn = document.getElementById("restart");
+    let W, H;
+    let running = false;
+    let animals = [];
+    let darts = [];
+    let pops = [];
+    let score = 0;
+    let lives = 5;
+    let spawnTimer = 0;
+    let levelSpeed = 1;
+    let lastTime = 0;
 
-    let deck = [];
-    let first = null;
-    let lock = false;
-    let moves = 0;
-    let pairs = 0;
-
-    totalEl.textContent = ANIMALS.length;
-
-    function buildDeck() {
-      deck = [];
-      for (const a of ANIMALS) {
-        deck.push(a);
-        deck.push(a);
-      }
-      for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-      }
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
     }
+    window.addEventListener("resize", resize);
+    resize();
 
-    function render() {
-      grid.innerHTML = "";
-      deck.forEach((a, i) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.dataset.index = i;
-        card.innerHTML =
-          '<div class="inner">' +
-          '<div class="front">🌲</div>' +
-          '<div class="back">' + a.icon + '<span class="label">' + a.name.toLowerCase() + '</span></div>' +
-          '</div>';
-        card.addEventListener("click", () => handleClick(card, a));
-        grid.appendChild(card);
+    function spawnAnimal() {
+      const def = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
+      const big = (def.size > 1.2);
+      animals.push({
+        def,
+        x: 30 + Math.random() * (W - 60),
+        y: (big ? H * 0.05 : H * 0.12) + Math.random() * H * 0.10,
+        r: Math.max(22, Math.min(46, 30 * def.size)),
+        wob: Math.random() * Math.PI * 2,
+        wobSpeed: 1 + Math.random() * 2
       });
     }
 
-    function handleClick(card, animal) {
-      if (lock || card.classList.contains("flip") || card.classList.contains("matched")) return;
-      card.classList.add("flip");
+    function shoot(tx, ty) {
+      const sx = W / 2;
+      const sy = H - 70;
+      const dx = tx - sx;
+      const dy = ty - sy;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      if (len < 5) return;
+      darts.push({ x: sx, y: sy, vx: dx / len * 900, vy: dy / len * 900 });
+    }
 
-      if (!first) {
-        first = { card, animal };
-        return;
+    function pop(x, y) {
+      for (let i = 0; i < 12; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const s = 120 + Math.random() * 260;
+        const cs = Math.random() * 0.6 + 0.2;
+        pops.push({
+          x, y,
+          vx: Math.cos(a) * s,
+          vy: Math.sin(a) * s,
+          life: 0.6 + Math.random() * 0.5,
+          max: 1,
+          color: ["#ffe259", "#ff6b6b", "#ffa751", "#7bed9f", "#54a0ff"][i % 5]
+        });
+      }
+    }
+
+    function update(dt) {
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) {
+        spawnAnimal();
+        spawnTimer = Math.max(0.3, 1.4 / levelSpeed);
       }
 
-      moves++;
-      movesEl.textContent = moves;
+      for (let i = animals.length - 1; i >= 0; i--) {
+        const a = animals[i];
+        a.wob += a.wobSpeed * dt;
+        const dir = (a.x < W / 2) ? 1 : -1;
+        a.x += Math.sin(a.wob) * 30 * dt + dir * 25 * dt;
+        a.y += 22 * a.def.speed * levelSpeed * dt;
 
-      const second = { card, animal };
-      if (first.animal.name === second.animal.name) {
-        first.card.classList.remove("flip");
-        first.card.classList.add("matched");
-        second.card.classList.add("matched");
-        pairs++;
-        pairsEl.textContent = pairs;
-        first = null;
-        if (pairs === ANIMALS.length) {
-          messageEl.textContent = "🎉 Parabéns! Você encontrou todos os animais do acampamento em " + moves + " movimentos! 🎉";
+        if (a.y >= H - 64 - a.r) {
+          animals.splice(i, 1);
+          lives--;
+          pop(a.x, H - 100);
+          if (lives <= 0) {
+            lives = 0;
+            gameOver();
+            return;
+          }
         }
-      } else {
-        lock = true;
-        setTimeout(() => {
-          first.card.classList.remove("flip");
-          second.card.classList.remove("flip");
-          first = null;
-          lock = false;
-        }, 600);
+      }
+
+      for (let i = darts.length - 1; i >= 0; i--) {
+        const d = darts[i];
+        d.x += d.vx * dt;
+        d.y += d.vy * dt;
+        let hit = null;
+        for (const a of animals) {
+          const dx = a.x - d.x, dy = a.y - d.y;
+          if (dx * dx + dy * dy < a.r * a.r) { hit = a; break; }
+        }
+        if (hit) {
+          darts.splice(i, 1);
+          animals = animals.filter(a => a !== hit);
+          score++;
+          pop(hit.x, hit.y);
+          if (score % 4 === 0) levelSpeed += 0.25;
+        } else if (d.x < -30 || d.x > W + 30 || d.y < -30 || d.y > H + 30) {
+          darts.splice(i, 1);
+        }
+      }
+
+      for (let i = pops.length - 1; i >= 0; i--) {
+        const p = pops[i];
+        p.life -= dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.vx *= 0.9;
+        p.vy = p.vy * 0.9 + 150 * dt;
+        if (p.life <= 0) pops.splice(i, 1);
       }
     }
 
-    function reset() {
-      buildDeck();
-      render();
-      first = null;
-      lock = false;
-      moves = 0;
-      pairs = 0;
-      movesEl.textContent = 0;
-      pairsEl.textContent = 0;
-      messageEl.textContent = "";
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.font = "28px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (const a of animals) {
+        const shake = Math.sin(Date.now() / 80) * 3 * a.def.speed;
+        ctx.save();
+        ctx.translate(a.x, a.y + shake);
+        ctx.font = (a.r * 2) + "px sans-serif";
+        ctx.fillText(a.def.icon, 0, 0);
+        ctx.restore();
+      }
+
+      ctx.textAlign = "left";
+      for (const d of darts) {
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        ctx.rotate(Math.atan2(d.vy, d.vx));
+        ctx.font = "26px sans-serif";
+        ctx.fillText("🦊", 0, 0);
+        ctx.restore();
+      }
+
+      ctx.textAlign = "center";
+      for (const p of pops) {
+        ctx.globalAlpha = Math.max(0, p.life / p.max);
+        ctx.font = "20px sans-serif";
+        ctx.fillText("✨", p.x, p.y);
+        ctx.globalAlpha = 1;
+      }
+
+      // player
+      const px = W / 2, py = H - 52;
+      ctx.font = "56px sans-serif";
+      ctx.fillText("🧑‍🏕️", px, py);
+
+      ctx.font = "30px sans-serif";
+      ctx.fillText("🔫", px + 30, py + 6);
     }
 
-    restartBtn.addEventListener("click", reset);
-    reset();
+    function gameOver() {
+      running = false;
+      finalScoreEl.textContent = score;
+      gameOverScreen.classList.remove("hidden");
+    }
+
+    function loop(t) {
+      if (!running) return;
+      const dt = Math.min(0.05, (t - lastTime) / 1000 || 0.016);
+      lastTime = t;
+      update(dt);
+      draw();
+      heartsEl.textContent = "❤️".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, 5 - lives));
+      scoreEl.textContent = score;
+      requestAnimationFrame(loop);
+    }
+
+    function start() {
+      animals = [];
+      darts = [];
+      pops = [];
+      score = 0;
+      lives = 5;
+      levelSpeed = 1;
+      spawnTimer = 0.4;
+      startScreen.classList.add("hidden");
+      gameOverScreen.classList.add("hidden");
+      running = true;
+      lastTime = performance.now();
+      requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      if (!running) return;
+      shoot(e.clientX, e.clientY);
+    });
+
+    document.getElementById("startBtn").addEventListener("click", start);
+    document.getElementById("againBtn").addEventListener("click", start);
   </script>
 </body>
 </html>
