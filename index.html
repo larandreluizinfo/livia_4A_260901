@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>O Homem da Cabana vs Chefão e Ratosa</title>
+  <title>O Homem da Cabana vs Chefão e Ratosa - 5 Níveis</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,9 +15,7 @@
       user-select: none;
     }
 
-    .sky {
-      position: fixed; top: 0; left: 0; width: 100%; height: 30vh; pointer-events: none; z-index: 0;
-    }
+    .sky { position: fixed; top: 0; left: 0; width: 100%; height: 30vh; pointer-events: none; z-index: 0; }
     .moon { position: absolute; top: 16px; right: 50px; width: 70px; height: 70px; background: radial-gradient(circle, #fffbe6, #d9d9d9); border-radius: 50%; box-shadow: 0 0 30px 10px rgba(255,255,220,.4); }
     .cloud { position: absolute; background: #e8e8f0; border-radius: 40px; opacity: .85; }
     .cloud::before, .cloud::after { content: ""; position: absolute; background: #e8e8f0; border-radius: 50%; }
@@ -37,70 +35,78 @@
     .t3 { left: 45%; bottom: 14%; }
     .t4 { left: 68%; bottom: 6%; transform: scale(1.35); }
     .t5 { left: 88%; bottom: 15%; }
-    .bush { position: fixed; bottom: 20%; background: #2c6e2c; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; }
-    .b1 { width: 90px; height: 50px; left: 35%; }
-    .b2 { width: 120px; height: 60px; left: 70%; }
 
-    #game {
-      position: fixed; inset: 0; z-index: 5;
-      cursor: crosshair;
-      display: block;
-    }
+    #game { position: fixed; inset: 0; z-index: 5; cursor: crosshair; display: block; }
 
     .hud {
       position: fixed; top: 10px; left: 10px; z-index: 10;
       background: rgba(255,255,255,.93);
       border: 4px solid #5a3a1a;
       border-radius: 14px;
-      padding: 8px 16px;
+      padding: 8px 14px;
       font-weight: bold;
       color: #3c2a10;
       display: flex;
-      gap: 22px;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
       box-shadow: 0 5px 0 rgba(0,0,0,.2);
+      font-size: 1em;
+      max-width: 96vw;
     }
-    .hud .hearts { font-size: 1.5em; letter-spacing: 2px; }
+    .hud .hearts { font-size: 1.2em; letter-spacing: 2px; }
+    .hud .nivel { background: #2f7d2f; color: #fff; border-radius: 8px; padding: 2px 10px; }
+    .hud .ammo { background: #333; color: #ffe259; border-radius: 8px; padding: 2px 10px; }
 
     .overlay {
       position: fixed; inset: 0; z-index: 20;
-      background: rgba(20, 20, 30, .78);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      color: #fff;
-      backdrop-filter: blur(2px);
+      background: rgba(20, 20, 30, .8);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center; color: #fff;
       padding: 20px;
     }
     .overlay.hidden { display: none; }
-    .overlay h1 { font-size: 2.6em; text-shadow: 3px 3px 0 #000; margin-bottom: 10px; }
-    .overlay p { font-size: 1.25em; margin-bottom: 18px; line-height: 1.5; }
+    .overlay h1 { font-size: 2.4em; text-shadow: 3px 3px 0 #000; margin-bottom: 10px; }
+    .overlay p { font-size: 1.15em; margin-bottom: 14px; line-height: 1.5; }
     .overlay .btn {
-      font-family: inherit;
-      font-size: 1.3em;
-      font-weight: bold;
-      color: #fff;
+      font-family: inherit; font-size: 1.3em; font-weight: bold; color: #fff;
       background: linear-gradient(180deg, #ff9a3d, #e26212);
-      border: none;
-      border-radius: 14px;
-      padding: 14px 32px;
-      cursor: pointer;
+      border: none; border-radius: 14px; padding: 14px 32px; cursor: pointer;
       box-shadow: 0 5px 0 #8f3d0a;
-      transition: transform .1s;
     }
     .overlay .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #8f3d0a; }
-    .overlay .animals { font-size: 2.5em; margin-bottom: 16px; letter-spacing: 6px; }
+    .overlay .animals { font-size: 2.2em; margin-bottom: 12px; letter-spacing: 6px; }
 
     .hint {
       position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
       z-index: 10; color: #fff; text-shadow: 1px 1px 0 #000;
-      font-size: 1.05em; text-align: center; pointer-events: none;
+      font-size: .95em; text-align: center; pointer-events: none;
+      max-width: 95vw;
     }
 
+    #toast {
+      position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+      z-index: 15; background: #ffe259; color: #3c2a10;
+      font-weight: bold; font-size: 1.4em; border-radius: 12px;
+      padding: 8px 24px; border: 3px solid #8b5a2b;
+      display: none; text-align: center;
+    }
+
+    #pad {
+      position: fixed; bottom: 40px; right: 12px; z-index: 12;
+      display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px);
+      gap: 4px; opacity: .85;
+    }
+    #pad button {
+      font-size: 1.5em; border-radius: 12px; border: 3px solid #5a3a1a;
+      background: rgba(255,255,255,.9); cursor: pointer; touch-action: none;
+    }
+    #pad button:active { background: #ffe259; }
+
     @media (max-width: 600px) {
-      .hud { gap: 12px; padding: 6px 12px; font-size: .9em; }
-      .overlay h1 { font-size: 1.8em; }
+      .hud { gap: 8px; padding: 6px 10px; font-size: .85em; }
+      .overlay h1 { font-size: 1.7em; }
+      #pad { bottom: 50px; }
     }
   </style>
 </head>
@@ -118,44 +124,53 @@
     <div class="tree t3"><div class="top"></div><div class="trunk"></div></div>
     <div class="tree t4"><div class="top"></div><div class="trunk"></div></div>
     <div class="tree t5"><div class="top"></div><div class="trunk"></div></div>
-    <div class="bush b1"></div>
-    <div class="bush b2"></div>
   </div>
 
   <div class="hud">
-    <span>Homem: <strong>🧔 Herói</strong></span>
+    <span class="nivel" id="level">NÍVEL 1 FÁCIL</span>
+    <span>🧔 Homem</span>
     <span>Vidas: <span class="hearts" id="hearts">❤️❤️❤️❤️❤️</span></span>
     <span>Pontos: <span id="score">0</span></span>
+    <span class="ammo">🔫 Munição: ∞</span>
+    <span>🎁 Prêmios: <span id="prizes">0</span></span>
   </div>
 
-  <div class="hint">🔫 Clique na Ratosa 🐀 e no Chefão 👹 antes que cheguem na cabana!</div>
+  <div id="toast"></div>
+
+  <div class="hint">🔫 Munição infinita! Clique para atirar • Setas/WASD para sair da cabana e pegar 🎁 prêmios!</div>
+
+  <div id="pad">
+    <span></span><button data-k="up">⬆️</button><span></span>
+    <button data-k="left">⬅️</button><button data-k="down">⬇️</button><button data-k="right">➡️</button>
+    <span></span><span></span><span></span>
+  </div>
 
   <canvas id="game"></canvas>
 
   <div class="overlay" id="startScreen">
     <h1>🛖 O HOMEM DA CABANA 🛖</h1>
-    <p class="animals">🐀 👹</p>
-    <p>A Ratosa e o Chefão querem pegar o Homem!<br>
-    O Chefão vai matar o Homem!<br>
-    Para se proteger, o Homem correu para a cabana 🛖<br>
-    e pegou sua arma 🔫!<br>
-    Ajude o Homem a atirar na <strong>Ratosa (1 tiro)</strong><br>
-    e no <strong>Chefão (3 tiros)</strong>!<br>
-    Mate o Chefão e o Homem <strong>GANHA O JOGO</strong>! 🏆</p>
+    <p class="animals">🐀 👹 🎁</p>
+    <p>A <strong>Ratosa 🐀 (1 tiro)</strong> e o <strong>Chefão 👹 (3 tiros)</strong><br>
+    querem matar o Homem!<br>
+    O Homem se protege na cabana 🛖 e tem <strong>arma com munição infinita ∞</strong>!<br><br>
+    ⭐ Ele pode <strong>SAIR da cabana</strong> para pegar <strong>prêmios 🎁⭐💎❤️</strong>!<br>
+    ❤️ cura 1 vida • 🎁+2 • ⭐+3 • 💎+5 pontos<br><br>
+    🏆 <strong>5 NÍVEIS:</strong> 1 Fácil • 2 Fácil+ • 3 Médio • 4 Difícil • 5 FINAL<br>
+    Faça <strong>30 pontos</strong> e mate o Chefão para o Homem GANHAR!</p>
     <button class="btn" id="startBtn">▶️ Começar</button>
   </div>
 
   <div class="overlay hidden" id="gameOver">
     <h1>😱 O Chefão pegou o Homem!</h1>
-    <p>O Homem fez <strong id="finalScore">0</strong> pontos na cabana!</p>
+    <p>O Homem fez <strong id="finalScore">0</strong> pontos e chegou ao <strong id="finalLevel">Nível 1</strong>!</p>
     <button class="btn" id="againBtn">🔄 Tentar de novo</button>
   </div>
 
   <div class="overlay hidden" id="victory">
     <h1>🏆 O HOMEM GANHOU! 🏆</h1>
-    <p class="animals">🧔 🔫 👹💥 🐀💥</p>
-    <p>O Homem matou o Chefão com sua arma<br>
-    dentro da cabana e se salvou!<br>
+    <p class="animals">🧔 🔫 👹💥</p>
+    <p>Ele passou os <strong>5 níveis</strong>, matou o Chefão<br>
+    e pegou <strong id="winPrizes">0</strong> prêmios!<br>
     Pontos: <strong id="winScore">0</strong>!</p>
     <button class="btn" id="winBtn">🔄 Jogar de novo</button>
   </div>
@@ -165,23 +180,49 @@
     const ctx = canvas.getContext("2d");
     const heartsEl = document.getElementById("hearts");
     const scoreEl = document.getElementById("score");
+    const prizesEl = document.getElementById("prizes");
+    const levelEl = document.getElementById("level");
     const finalScoreEl = document.getElementById("finalScore");
+    const finalLevelEl = document.getElementById("finalLevel");
     const winScoreEl = document.getElementById("winScore");
+    const winPrizesEl = document.getElementById("winPrizes");
     const startScreen = document.getElementById("startScreen");
     const gameOverScreen = document.getElementById("gameOver");
     const victoryScreen = document.getElementById("victory");
+    const toast = document.getElementById("toast");
 
-    // A Ratosa: rapida, fraca (1 tiro). O Chefao: forte, chefe (3 tiros).
     const ENEMIES = [
-      { name: "Ratosa", icon: "🐀", size: 1.0, speed: 1.15, hp: 1, boss: false, weight: 70 },
-      { name: "Chefao", icon: "👹", size: 1.6, speed: 0.6, hp: 3, boss: true, weight: 30 }
+      { name: "Ratosa", icon: "🐀", size: 1.0, speed: 1.15, hp: 1, boss: false },
+      { name: "Chefao", icon: "👹", size: 1.6, speed: 0.6, hp: 3, boss: true }
     ];
 
-    function pickEnemy() {
-      // No comeco so vem Ratosa, depois o Chefao aparece
-      if (score < 2) return ENEMIES[0];
-      const r = Math.random() * 100;
-      return r < ENEMIES[0].weight ? ENEMIES[0] : ENEMIES[1];
+    const PRIZE_TYPES = [
+      { icon: "🎁", points: 2, label: "+2" },
+      { icon: "⭐", points: 3, label: "+3" },
+      { icon: "💎", points: 5, label: "+5" },
+      { icon: "❤️", points: 1, heal: 1, label: "+1 vida" }
+    ];
+
+    const LEVELS = [
+      { n: 1, name: "NÍVEL 1 FÁCIL" },
+      { n: 2, name: "NÍVEL 2 FÁCIL+" },
+      { n: 3, name: "NÍVEL 3 MÉDIO" },
+      { n: 4, name: "NÍVEL 4 DIFÍCIL" },
+      { n: 5, name: "NÍVEL 5 FINAL 👹" }
+    ];
+    const WIN_SCORE = 30;
+    function getLevel(score) {
+      if (score >= 24) return 5;
+      if (score >= 18) return 4;
+      if (score >= 12) return 3;
+      if (score >= 6) return 2;
+      return 1;
+    }
+
+    function pickEnemy(level) {
+      if (score < 2 && level === 1) return ENEMIES[0];
+      const bossChance = 10 + level * 6; // L1 ~16% ... L5 ~40%
+      return Math.random() * 100 < bossChance ? ENEMIES[1] : ENEMIES[0];
     }
 
     let W, H;
@@ -189,42 +230,74 @@
     let animals = [];
     let darts = [];
     let pops = [];
+    let premios = [];
     let score = 0;
+    let prizeCount = 0;
     let lives = 5;
+    let level = 1;
     let spawnTimer = 0;
-    let levelSpeed = 1;
+    let prizeTimer = 2;
     let lastTime = 0;
+    let toastTimer = null;
+
+    // O Homem pode sair da cabana!
+    let player = { x: 0, y: 0 };
+    let cabin = { x: 0, y: 0 };
+    const keys = {};
 
     function resize() {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
+      cabin.x = W / 2;
+      cabin.y = H - 56;
+      player.x = Math.min(Math.max(player.x || cabin.x, 30), W - 30);
+      player.y = Math.min(Math.max(player.y || (H - 120), 80), H - 40);
     }
     window.addEventListener("resize", resize);
     resize();
 
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.style.display = "none", 1800);
+    }
+
     function spawnAnimal() {
-      const def = pickEnemy();
-      const big = def.boss;
+      const def = pickEnemy(level);
+      const bossHp = def.boss ? (level >= 5 ? 5 : 3) : 1;
       animals.push({
         def,
-        hp: def.hp,
+        hp: bossHp,
+        maxHp: bossHp,
         x: 30 + Math.random() * (W - 60),
-        y: (big ? H * 0.05 : H * 0.12) + Math.random() * H * 0.10,
-        r: Math.max(24, Math.min(52, 30 * def.size)),
+        y: (def.boss ? H * 0.05 : H * 0.12) + Math.random() * H * 0.10,
+        r: Math.max(24, Math.min(54, 30 * def.size)),
         wob: Math.random() * Math.PI * 2,
         wobSpeed: 1 + Math.random() * 2,
         flash: 0
       });
     }
 
+    function spawnPremio() {
+      const t = PRIZE_TYPES[Math.floor(Math.random() * PRIZE_TYPES.length)];
+      premios.push({
+        type: t,
+        x: 40 + Math.random() * (W - 80),
+        y: H * 0.35 + Math.random() * (H * 0.45),
+        r: 24,
+        wob: Math.random() * Math.PI * 2,
+        life: 9
+      });
+    }
+
     function shoot(tx, ty) {
-      const sx = W / 2;
-      const sy = H - 70;
-      const dx = tx - sx;
-      const dy = ty - sy;
+      // Municao infinita! Nunca acaba.
+      const dx = tx - player.x;
+      const dy = ty - player.y;
       const len = Math.sqrt(dx * dx + dy * dy);
       if (len < 5) return;
-      darts.push({ x: sx, y: sy, vx: dx / len * 900, vy: dy / len * 900 });
+      darts.push({ x: player.x, y: player.y - 10, vx: dx / len * 950, vy: dy / len * 950 });
     }
 
     function pop(x, y) {
@@ -233,22 +306,50 @@
         const s = 120 + Math.random() * 260;
         pops.push({
           x, y,
-          vx: Math.cos(a) * s,
-          vy: Math.sin(a) * s,
-          life: 0.6 + Math.random() * 0.5,
-          max: 1,
-          color: ["#ffe259", "#ff6b6b", "#ffa751", "#7bed9f", "#54a0ff"][i % 5]
+          vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+          life: 0.6 + Math.random() * 0.5, max: 1
         });
       }
     }
 
+    function checkLevelUp() {
+      const nl = getLevel(score);
+      if (nl !== level) {
+        level = nl;
+        showToast("🎉 " + LEVELS[level - 1].name + "! " + (level === 5 ? "Chefão final!" : "Mais rápido!"));
+      }
+      if (score >= WIN_SCORE) {
+        victory();
+        return true;
+      }
+      return false;
+    }
+
     function update(dt) {
+      const levelSpeed = 1 + (level - 1) * 0.35;
+
+      // Move o Homem com teclado (ele pode sair da cabana!)
+      const sp = 320 * dt;
+      if (keys["arrowleft"] || keys["a"]) player.x -= sp;
+      if (keys["arrowright"] || keys["d"]) player.x += sp;
+      if (keys["arrowup"] || keys["w"]) player.y -= sp;
+      if (keys["arrowdown"] || keys["s"]) player.y += sp;
+      player.x = Math.min(Math.max(player.x, 24), W - 24);
+      player.y = Math.min(Math.max(player.y, H * 0.3), H - 36);
+
       spawnTimer -= dt;
       if (spawnTimer <= 0) {
         spawnAnimal();
-        spawnTimer = Math.max(0.35, 1.4 / levelSpeed);
+        spawnTimer = Math.max(0.3, 1.5 / levelSpeed);
       }
 
+      prizeTimer -= dt;
+      if (prizeTimer <= 0) {
+        spawnPremio();
+        prizeTimer = 3.5 + Math.random() * 2;
+      }
+
+      // Inimigos descem
       for (let i = animals.length - 1; i >= 0; i--) {
         const a = animals[i];
         if (a.flash > 0) a.flash -= dt;
@@ -257,19 +358,27 @@
         a.x += Math.sin(a.wob) * 30 * dt + dir * 25 * dt;
         a.y += 22 * a.def.speed * levelSpeed * dt;
 
-        if (a.y >= H - 64 - a.r) {
+        // Encostou no Homem? (fora da cabana e perigoso!)
+        const pdx = a.x - player.x, pdy = a.y - player.y;
+        if (pdx * pdx + pdy * pdy < (a.r + 22) * (a.r + 22)) {
           animals.splice(i, 1);
-          // Chefao tira 2 vidas, Ratosa tira 1
           lives -= a.def.boss ? 2 : 1;
-          pop(a.x, H - 100);
-          if (lives <= 0) {
-            lives = 0;
-            gameOver();
-            return;
-          }
+          pop(player.x, player.y);
+          showToast(a.def.boss ? "👹 O Chefão te pegou!" : "🐀 A Ratosa te mordeu!");
+          if (lives <= 0) { lives = 0; gameOver(); return; }
+          continue;
+        }
+
+        // Chegou na cabana?
+        if (a.y >= cabin.y - 20 - a.r * 0.3) {
+          animals.splice(i, 1);
+          lives -= a.def.boss ? 2 : 1;
+          pop(a.x, cabin.y - 40);
+          if (lives <= 0) { lives = 0; gameOver(); return; }
         }
       }
 
+      // Tiros (infinitos)
       for (let i = darts.length - 1; i >= 0; i--) {
         const d = darts[i];
         d.x += d.vx * dt;
@@ -285,17 +394,35 @@
           hit.flash = 0.15;
           if (hit.hp <= 0) {
             animals = animals.filter(a => a !== hit);
-            score++;
+            score += hit.def.boss ? 3 : 1;
             pop(hit.x, hit.y);
-            if (hit.def.boss) {
-              // Matou o Chefao = o Homem ganha o jogo!
-              victory();
-              return;
-            }
-            if (score % 4 === 0) levelSpeed += 0.25;
+            if (hit.def.boss) showToast("💥 Chefão derrotado! +3!");
+            if (checkLevelUp()) return;
           }
         } else if (d.x < -30 || d.x > W + 30 || d.y < -30 || d.y > H + 30) {
           darts.splice(i, 1);
+        }
+      }
+
+      // Premios: Homem encosta para pegar!
+      for (let i = premios.length - 1; i >= 0; i--) {
+        const pr = premios[i];
+        pr.wob += 3 * dt;
+        pr.life -= dt;
+        if (pr.life <= 0) { premios.splice(i, 1); continue; }
+        const dx = pr.x - player.x, dy = pr.y - player.y;
+        if (dx * dx + dy * dy < (pr.r + 24) * (pr.r + 24)) {
+          premios.splice(i, 1);
+          prizeCount++;
+          if (pr.type.heal) {
+            lives = Math.min(5, lives + 1);
+            showToast("❤️ +1 vida!");
+          } else {
+            score += pr.type.points;
+            pop(pr.x, pr.y);
+            showToast(pr.type.icon + " Prêmio! " + pr.type.label + " pontos!");
+          }
+          if (checkLevelUp()) return;
         }
       }
 
@@ -312,22 +439,32 @@
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
-
-      ctx.font = "28px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
 
+      // Cabana fixa
+      ctx.font = "64px sans-serif";
+      ctx.fillText("🛖", cabin.x, cabin.y + 6);
+
+      // Premios brilhando
+      for (const pr of premios) {
+        const bob = Math.sin(pr.wob) * 5;
+        ctx.save();
+        if (pr.life < 3) ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(Date.now() / 200));
+        ctx.font = "38px sans-serif";
+        ctx.fillText(pr.type.icon, pr.x, pr.y + bob);
+        ctx.restore();
+      }
+
+      // Inimigos
       for (const a of animals) {
         const shake = Math.sin(Date.now() / 80) * 3 * a.def.speed;
         ctx.save();
         ctx.translate(a.x, a.y + shake);
+        if (a.flash > 0) ctx.globalAlpha = 0.5;
         ctx.font = (a.r * 2) + "px sans-serif";
-        if (a.flash > 0) {
-          ctx.globalAlpha = 0.5;
-        }
         ctx.fillText(a.def.icon, 0, 0);
         ctx.globalAlpha = 1;
-        // Mostra vida do Chefao
         if (a.def.boss) {
           ctx.font = "18px sans-serif";
           ctx.fillText("❤️".repeat(Math.max(0, a.hp)), 0, -a.r - 14);
@@ -335,7 +472,7 @@
         ctx.restore();
       }
 
-      // Tiros da arma do Homem
+      // Tiros
       ctx.textAlign = "left";
       for (const d of darts) {
         ctx.save();
@@ -346,6 +483,7 @@
         ctx.restore();
       }
 
+      // Particulas
       ctx.textAlign = "center";
       for (const p of pops) {
         ctx.globalAlpha = Math.max(0, p.life / p.max);
@@ -354,33 +492,31 @@
         ctx.globalAlpha = 1;
       }
 
-      // O Homem protegido na cabana com sua arma
-      const px = W / 2, py = H - 52;
-      ctx.font = "64px sans-serif";
-      ctx.fillText("🛖", px, py + 6);
-      ctx.font = "44px sans-serif";
-      ctx.fillText("🧔", px, py - 6);
-      ctx.font = "30px sans-serif";
-      ctx.fillText("🔫", px + 34, py + 2);
-
-      ctx.font = "16px sans-serif";
+      // O Homem (anda pela tela!)
+      ctx.font = "46px sans-serif";
+      ctx.fillText("🧔", player.x, player.y);
+      ctx.font = "28px sans-serif";
+      ctx.fillText("🔫", player.x + 30, player.y + 4);
+      ctx.font = "14px sans-serif";
       ctx.fillStyle = "#fff";
       ctx.strokeStyle = "#000";
       ctx.lineWidth = 3;
-      ctx.strokeText("HOMEM", px, py + 48);
-      ctx.fillText("HOMEM", px, py + 48);
+      ctx.strokeText("HOMEM", player.x, player.y + 36);
+      ctx.fillText("HOMEM", player.x, player.y + 36);
       ctx.fillStyle = "#000";
     }
 
     function gameOver() {
       running = false;
       finalScoreEl.textContent = score;
+      finalLevelEl.textContent = LEVELS[level - 1].name;
       gameOverScreen.classList.remove("hidden");
     }
 
     function victory() {
       running = false;
       winScoreEl.textContent = score;
+      winPrizesEl.textContent = prizeCount;
       victoryScreen.classList.remove("hidden");
     }
 
@@ -389,37 +525,74 @@
       const dt = Math.min(0.05, (t - lastTime) / 1000 || 0.016);
       lastTime = t;
       update(dt);
+      if (!running) return;
       draw();
       heartsEl.textContent = "❤️".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, 5 - lives));
       scoreEl.textContent = score;
+      prizesEl.textContent = prizeCount;
+      levelEl.textContent = LEVELS[level - 1].name;
       requestAnimationFrame(loop);
     }
 
     function start() {
-      animals = [];
-      darts = [];
-      pops = [];
-      score = 0;
-      lives = 5;
-      levelSpeed = 1;
-      spawnTimer = 0.4;
+      animals = []; darts = []; pops = []; premios = [];
+      score = 0; prizeCount = 0; lives = 5; level = 1;
+      spawnTimer = 0.4; prizeTimer = 2;
+      player.x = cabin.x; player.y = cabin.y - 70;
       startScreen.classList.add("hidden");
       gameOverScreen.classList.add("hidden");
       victoryScreen.classList.add("hidden");
       running = true;
       lastTime = performance.now();
+      showToast("⭐ NÍVEL 1 FÁCIL! Boa sorte!");
       requestAnimationFrame(loop);
     }
 
     function onShoot(e) {
       if (!running) return;
-      const x = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
-      const y = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+      let x, y;
+      if (e.clientX !== undefined) { x = e.clientX; y = e.clientY; }
+      else if (e.touches && e.touches[0]) { x = e.touches[0].clientX; y = e.touches[0].clientY; }
+      else return;
+      // Nao atirar quando clicou nos botoes de andar
+      if (e.target && e.target.closest && e.target.closest("#pad")) return;
       shoot(x, y);
     }
 
+    // Teclado: move o Homem para fora da cabana pegar premios
+    window.addEventListener("keydown", (e) => { keys[e.key.toLowerCase()] = true; });
+    window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
+
+    // Botoes de andar (celular)
+    document.querySelectorAll("#pad button").forEach((b) => {
+      const k = b.dataset.k;
+      const map = { up: "arrowup", down: "arrowdown", left: "arrowleft", right: "arrowright" };
+      const on = (e) => { e.preventDefault(); keys[map[k]] = true; };
+      const off = (e) => { e.preventDefault(); keys[map[k]] = false; };
+      b.addEventListener("touchstart", on, { passive: false });
+      b.addEventListener("touchend", off);
+      b.addEventListener("mousedown", on);
+      b.addEventListener("mouseup", off);
+      b.addEventListener("mouseleave", off);
+    });
+
+    // Arrastar o Homem com o dedo/mouse? Toque longo move, toque rapido atira.
+    let dragId = null;
+    canvas.addEventListener("touchstart", (e) => {
+      const t = e.touches[0];
+      const dx = t.clientX - player.x, dy = t.clientY - player.y;
+      if (dx * dx + dy * dy < 60 * 60) { dragId = t.identifier; }
+      else { e.preventDefault(); onShoot(e); }
+    }, { passive: false });
+    canvas.addEventListener("touchmove", (e) => {
+      if (dragId === null) return;
+      e.preventDefault();
+      for (const t of e.touches) {
+        if (t.identifier === dragId) { player.x = t.clientX; player.y = t.clientY; }
+      }
+    }, { passive: false });
+    canvas.addEventListener("touchend", (e) => { dragId = null; });
     canvas.addEventListener("click", onShoot);
-    canvas.addEventListener("touchstart", (e) => { e.preventDefault(); onShoot(e); }, { passive: false });
 
     document.getElementById("startBtn").addEventListener("click", start);
     document.getElementById("againBtn").addEventListener("click", start);
