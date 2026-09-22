@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>O Homem da Cabana vs Chefão e Ratosa - 5 Níveis</title>
+  <title>O Homem da Cabana vs Chefão e Ratosa - 20 Níveis + Dragão</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -128,8 +128,8 @@
   </div>
 
   <div class="hud">
-    <span class="nivel" id="level">NÍVEL 1 FÁCIL</span>
-    <span>🧔 Homem</span>
+    <span class="nivel" id="level">NÍVEL 1</span>
+    <span>🧔 Homem 🐉</span>
     <span>Vidas: <span class="hearts" id="hearts">❤️❤️❤️❤️❤️</span></span>
     <span>Pontos: <span id="score">0</span></span>
     <span class="ammo">🔫 Munição: ∞</span>
@@ -150,17 +150,21 @@
   <canvas id="game"></canvas>
 
   <div class="overlay" id="startScreen">
-    <h1>🛖 O HOMEM DA CABANA 🛖</h1>
-    <p class="animals">🐀 👹 🎁</p>
-    <p>A <strong>Ratosa 🐀 (1 tiro)</strong> e o <strong>Chefão 👹 (3 tiros)</strong><br>
+    <h1>🛖 O HOMEM DA CABANA 🐉</h1>
+    <p class="animals">🐀 👹 🎁 🐉</p>
+    <p>A <strong>Ratosa 🐀 (1 tiro)</strong> e o <strong>Chefão 👹 (vários tiros)</strong><br>
     querem matar o Homem!<br>
     O Homem se protege na cabana 🛖 e tem <strong>arma com munição infinita ∞</strong>!<br><br>
+    🐉 O <strong>DRAGÃO amigo</strong> voa junto e <strong>cospe fogo 🔥 sozinho</strong><br>
+    para ajudar a matar o Chefão!<br><br>
     ⭐ Ele pode <strong>SAIR da cabana</strong> para pegar <strong>prêmios 🎁⭐💎❤️</strong>!<br>
     ❤️ cura 1 vida • 🎁+2 • ⭐+3 • 💎+5 pontos<br>
     🛡️ <strong>Para se proteger do Chefão, ele ENTRA na cabana!</strong><br>
     Dentro da cabana = <strong>PROTEGIDO</strong> 🛖🛡️ • Fora = perigoso ⚠️<br><br>
-    🏆 <strong>5 NÍVEIS:</strong> 1 Fácil • 2 Fácil+ • 3 Médio • 4 Difícil • 5 FINAL<br>
-    Faça <strong>30 pontos</strong> e mate o Chefão para o Homem GANHAR!</p>
+    🏆 <strong>20 NÍVEIS, cada um mais difícil!</strong><br>
+    1-5 Fácil • 6-10 Médio • 11-15 Difícil • 16-20 FINAL 🐉<br>
+    Cada nível: bichos mais rápidos, mais Chefões 👹 e Chefão com mais ❤️!<br>
+    Faça <strong>120 pontos</strong> para o Homem GANHAR!</p>
     <button class="btn" id="startBtn">▶️ Começar</button>
   </div>
 
@@ -172,8 +176,9 @@
 
   <div class="overlay hidden" id="victory">
     <h1>🏆 O HOMEM GANHOU! 🏆</h1>
-    <p class="animals">🧔 🔫 👹💥</p>
-    <p>Ele passou os <strong>5 níveis</strong>, matou o Chefão<br>
+    <p class="animals">🧔 🐉 🔫 👹💥</p>
+    <p>Ele passou os <strong>20 níveis</strong> com o Dragão 🐉,<br>
+    matou o Chefão<br>
     e pegou <strong id="winPrizes">0</strong> prêmios!<br>
     Pontos: <strong id="winScore">0</strong>!</p>
     <button class="btn" id="winBtn">🔄 Jogar de novo</button>
@@ -208,37 +213,46 @@
       { icon: "❤️", points: 1, heal: 1, label: "+1 vida" }
     ];
 
-    const LEVELS = [
-      { n: 1, name: "NÍVEL 1 FÁCIL" },
-      { n: 2, name: "NÍVEL 2 FÁCIL+" },
-      { n: 3, name: "NÍVEL 3 MÉDIO" },
-      { n: 4, name: "NÍVEL 4 DIFÍCIL" },
-      { n: 5, name: "NÍVEL 5 FINAL 👹" }
-    ];
-    const WIN_SCORE = 30;
+    const LEVELS = [];
+    for (let i = 1; i <= 20; i++) {
+      let nome = "NÍVEL " + i;
+      if (i <= 5) nome += " FÁCIL";
+      else if (i <= 10) nome += " MÉDIO";
+      else if (i <= 15) nome += " DIFÍCIL";
+      else if (i <= 19) nome += " SUPER DIFÍCIL";
+      else nome += " FINAL 🐉👹";
+      LEVELS.push({ n: i, name: nome });
+    }
+    const WIN_SCORE = 120;
     const SAFE_RADIUS = 70; // perto da cabana = protegido
     function isInCabin() {
       const dx = player.x - cabin.x, dy = player.y - cabin.y;
       return dx * dx + dy * dy < SAFE_RADIUS * SAFE_RADIUS;
     }
     function getLevel(score) {
-      if (score >= 24) return 5;
-      if (score >= 18) return 4;
-      if (score >= 12) return 3;
-      if (score >= 6) return 2;
-      return 1;
+      // A cada 6 pontos sobe 1 nível, até o 20
+      return Math.min(20, Math.floor(score / 6) + 1);
     }
 
     function pickEnemy(level) {
       if (score < 2 && level === 1) return ENEMIES[0];
-      const bossChance = 10 + level * 6; // L1 ~16% ... L5 ~40%
+      const bossChance = Math.min(42, 10 + level * 1.5); // L1 ~11% ... L20 ~40%
       return Math.random() * 100 < bossChance ? ENEMIES[1] : ENEMIES[0];
+    }
+
+    function bossHpForLevel(level) {
+      if (level >= 17) return 7;
+      if (level >= 13) return 6;
+      if (level >= 9) return 5;
+      if (level >= 5) return 4;
+      return 3;
     }
 
     let W, H;
     let running = false;
     let animals = [];
     let darts = [];
+    let dragonFire = [];
     let pops = [];
     let premios = [];
     let score = 0;
@@ -247,12 +261,15 @@
     let level = 1;
     let spawnTimer = 0;
     let prizeTimer = 2;
+    let dragonTimer = 0;
     let lastTime = 0;
     let toastTimer = null;
 
     // O Homem pode sair da cabana!
     let player = { x: 0, y: 0 };
     let cabin = { x: 0, y: 0 };
+    // 🐉 Dragão amigo que ajuda a matar o Chefão!
+    let dragon = { x: 0, y: 0 };
     const keys = {};
 
     function resize() {
@@ -275,7 +292,7 @@
 
     function spawnAnimal() {
       const def = pickEnemy(level);
-      const bossHp = def.boss ? (level >= 5 ? 5 : 3) : 1;
+      const bossHp = def.boss ? bossHpForLevel(level) : 1;
       animals.push({
         def,
         hp: bossHp,
@@ -326,7 +343,12 @@
       const nl = getLevel(score);
       if (nl !== level) {
         level = nl;
-        showToast("🎉 " + LEVELS[level - 1].name + "! " + (level === 5 ? "Chefão final!" : "Mais rápido!"));
+        let extra = "Mais rápido!";
+        if (level === 20) extra = "Chefão final + Dragão com tudo! 🐉🔥";
+        else if (level >= 16) extra = "Super difícil!";
+        else if (level >= 11) extra = "Difícil!";
+        else if (level >= 6) extra = "Nível médio!";
+        showToast("🎉 " + LEVELS[level - 1].name + "! " + extra);
       }
       if (score >= WIN_SCORE) {
         victory();
@@ -336,7 +358,7 @@
     }
 
     function update(dt) {
-      const levelSpeed = 1 + (level - 1) * 0.35;
+      const levelSpeed = 1 + (level - 1) * 0.12;
 
       // Move o Homem com teclado (ele pode sair da cabana!)
       const sp = 320 * dt;
@@ -347,10 +369,43 @@
       player.x = Math.min(Math.max(player.x, 24), W - 24);
       player.y = Math.min(Math.max(player.y, H * 0.3), H - 36);
 
+      // 🐉 Dragão segue o Homem!
+      const tx = player.x - 70, ty = player.y - 50;
+      dragon.x += (tx - dragon.x) * Math.min(1, 4 * dt);
+      dragon.y += (ty - dragon.y) * Math.min(1, 4 * dt);
+
+      // 🐉 Dragão cospe fogo sozinho no inimigo mais perto (prefere o Chefão!)
+      dragonTimer -= dt;
+      if (dragonTimer <= 0 && animals.length > 0) {
+        let alvo = null;
+        for (const a of animals) {
+          if (a.def.boss) { alvo = a; break; }
+        }
+        if (!alvo) {
+          let best = Infinity;
+          for (const a of animals) {
+            const dx = a.x - dragon.x, dy = a.y - dragon.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < best) { best = d2; alvo = a; }
+          }
+        }
+        if (alvo) {
+          const dx = alvo.x - dragon.x, dy = alvo.y - dragon.y;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          dragonFire.push({ x: dragon.x, y: dragon.y, vx: dx / len * 700, vy: dy / len * 700 });
+        }
+        dragonTimer = Math.max(0.35, 0.85 - level * 0.02);
+      }
+
       spawnTimer -= dt;
       if (spawnTimer <= 0) {
-        spawnAnimal();
-        spawnTimer = Math.max(0.3, 1.5 / levelSpeed);
+        // Cada nível fica mais difícil: nascem mais bichos e mais rápido!
+        let quantos = 1;
+        if (level >= 16) quantos = 3;
+        else if (level >= 11) quantos = 2;
+        else if (level >= 6 && Math.random() < 0.4) quantos = 2;
+        for (let k = 0; k < quantos; k++) spawnAnimal();
+        spawnTimer = Math.max(0.25, 1.6 / levelSpeed - level * 0.02);
       }
 
       prizeTimer -= dt;
@@ -359,13 +414,14 @@
         prizeTimer = 3.5 + Math.random() * 2;
       }
 
-      // Inimigos descem
+      // Inimigos descem - cada nível mais rápido e mais espertos!
       for (let i = animals.length - 1; i >= 0; i--) {
         const a = animals[i];
         if (a.flash > 0) a.flash -= dt;
         a.wob += a.wobSpeed * dt;
         const dir = (a.x < W / 2) ? 1 : -1;
-        a.x += Math.sin(a.wob) * 30 * dt + dir * 25 * dt;
+        const ladoSpeed = 1 + level * 0.06; // nível alto anda mais pro lado
+        a.x += Math.sin(a.wob) * 30 * ladoSpeed * dt + dir * 25 * ladoSpeed * dt;
         a.y += 22 * a.def.speed * levelSpeed * dt;
 
         // Encostou no Homem? Dentro da cabana ele esta PROTEGIDO!
@@ -413,11 +469,37 @@
             animals = animals.filter(a => a !== hit);
             score += hit.def.boss ? 3 : 1;
             pop(hit.x, hit.y);
-            if (hit.def.boss) showToast("💥 Chefão derrotado! +3!");
+            if (hit.def.boss) showToast("💥 Chefão derrotado! +3! 🐉 Ajudou!");
             if (checkLevelUp()) return;
           }
         } else if (d.x < -30 || d.x > W + 30 || d.y < -30 || d.y > H + 30) {
           darts.splice(i, 1);
+        }
+      }
+
+      // 🔥 Fogo do Dragão (ajuda automática!)
+      for (let i = dragonFire.length - 1; i >= 0; i--) {
+        const d = dragonFire[i];
+        d.x += d.vx * dt;
+        d.y += d.vy * dt;
+        let hit = null;
+        for (const a of animals) {
+          const dx = a.x - d.x, dy = a.y - d.y;
+          if (dx * dx + dy * dy < (a.r + 10) * (a.r + 10)) { hit = a; break; }
+        }
+        if (hit) {
+          dragonFire.splice(i, 1);
+          hit.hp--;
+          hit.flash = 0.15;
+          if (hit.hp <= 0) {
+            animals = animals.filter(a => a !== hit);
+            score += hit.def.boss ? 3 : 1;
+            pop(hit.x, hit.y);
+            if (hit.def.boss) showToast("🐉🔥 O Dragão queimou o Chefão! +3!");
+            if (checkLevelUp()) return;
+          }
+        } else if (d.x < -30 || d.x > W + 30 || d.y < -30 || d.y > H + 30) {
+          dragonFire.splice(i, 1);
         }
       }
 
@@ -511,6 +593,16 @@
         ctx.restore();
       }
 
+      // 🔥 Fogo do Dragão
+      for (const d of dragonFire) {
+        ctx.save();
+        ctx.translate(d.x, d.y);
+        ctx.rotate(Math.atan2(d.vy, d.vx));
+        ctx.font = "26px sans-serif";
+        ctx.fillText("🔥", 0, 0);
+        ctx.restore();
+      }
+
       // Particulas
       ctx.textAlign = "center";
       for (const p of pops) {
@@ -521,6 +613,18 @@
       }
 
       // O Homem (anda pela tela! Entra na cabana para se proteger!)
+      // 🐉 Dragão amigo voando junto!
+      const dragBob = Math.sin(Date.now() / 300) * 6;
+      ctx.font = "52px sans-serif";
+      ctx.fillText("🐉", dragon.x, dragon.y + dragBob);
+      ctx.font = "13px sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 3;
+      ctx.strokeText("DRAGÃO", dragon.x, dragon.y + dragBob + 34);
+      ctx.fillText("DRAGÃO", dragon.x, dragon.y + dragBob + 34);
+      ctx.fillStyle = "#000";
+
       ctx.font = "46px sans-serif";
       ctx.fillText("🧔", player.x, player.y);
       if (isInCabin()) {
@@ -574,16 +678,17 @@
     }
 
     function start() {
-      animals = []; darts = []; pops = []; premios = [];
+      animals = []; darts = []; dragonFire = []; pops = []; premios = [];
       score = 0; prizeCount = 0; lives = 5; level = 1;
-      spawnTimer = 0.4; prizeTimer = 2;
+      spawnTimer = 0.4; prizeTimer = 2; dragonTimer = 0.5;
       player.x = cabin.x; player.y = cabin.y - 30;
+      dragon.x = player.x - 70; dragon.y = player.y - 50;
       startScreen.classList.add("hidden");
       gameOverScreen.classList.add("hidden");
       victoryScreen.classList.add("hidden");
       running = true;
       lastTime = performance.now();
-      showToast("⭐ NÍVEL 1 FÁCIL! Boa sorte!");
+      showToast("⭐ NÍVEL 1 FÁCIL! O Dragão 🐉 vai te ajudar!");
       requestAnimationFrame(loop);
     }
 
